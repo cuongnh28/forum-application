@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fc.mapper.PostMapper">
+
+    <resultMap type="com.fc.model.User" id="userMap">
+        <id column="userId" property="userId"></id>
+        <result column="username" property="username"></result>
+        <result column="head_url" property="headUrl"></result>
+        <result column="description" property="description"></result>
+    </resultMap>
+
+    <resultMap type="com.fc.model.Topic" id="topicMap">
+        <id column="topicId" property="topicId"></id>
+        <result column="name" property="name"></result>
+        <result column="content" property="content"></result>
+    </resultMap>
+
+    <resultMap type="com.fc.model.Post" id="postMap">
+        <id column="postId" property="postId"/>
+        <result column="title" property="title"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="scan_count" property="scanCount"/>
+        <result column="isPublish" property="isPublish"/>
+        <association property="user" javaType="com.fc.model.User" resultMap="userMap"/>
+        <association property="topic" javaType="com.fc.model.Topic" resultMap="topicMap"/>
+    </resultMap>
+
+    <resultMap type="com.fc.model.Post" id="postByTopicMap">
+        <id column="postId" property="postId"/>
+        <result column="title" property="title"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="isPublish" property="isPublish"/>
+        <association property="user" javaType="com.fc.model.User" resultMap="userMap"/>
+        <association property="topic" javaType="com.fc.model.Topic" resultMap="topicMap"/>
+    </resultMap>
+
+
+    <resultMap type="com.fc.model.Post" id="searchByTitleMap">
+        <id column="postId" property="postId"/>
+        <result column="title" property="title"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="scan_count" property="scanCount"/>
+        <result column="isPublish" property="isPublish"/>
+        <association property="user" javaType="com.fc.model.User" resultMap="userMap"/>
+        <association property="topic" javaType="com.fc.model.Topic" resultMap="topicMap"/>
+    </resultMap>
+
+    <resultMap type="com.fc.model.Post" id="postLatestMap">
+        <id column="postId" property="postId"/>
+        <result column="title" property="title"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="scan_count" property="scanCount"/>
+        <result column="isPublish" property="isPublish"/>
+        <association property="user" javaType="com.fc.model.User" resultMap="userMap"/>
+        <association property="topic" javaType="com.fc.model.Topic" resultMap="topicMap"/>
+    </resultMap>
+
+    <resultMap type="com.fc.model.Post" id="postHottestMap">
+        <id column="postId" property="postId"/>
+        <result column="title" property="title"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="scan_count" property="scanCount"/>
+        <result column="isPublish" property="isPublish"/>
+        <association property="user" javaType="com.fc.model.User" resultMap="userMap"/>
+        <association property="topic" javaType="com.fc.model.Topic" resultMap="topicMap"/>
+    </resultMap>
+
+    <resultMap type="com.fc.model.Post" id="postTopicMap">
+        <id column="postId" property="postId"/>
+        <result column="title" property="title"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="scan_count" property="scanCount"/>
+        <result column="isPublish" property="isPublish"/>
+        <association property="user" javaType="com.fc.model.User" resultMap="userMap"/>
+        <association property="topic" javaType="com.fc.model.Topic" resultMap="topicMap"/>
+    </resultMap>
+
+    <resultMap type="com.fc.model.Post" id="post2Map">
+        <id column="postId" property="postId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="comment_time" property="commentTime"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="scan_count" property="scanCount"/>
+        <result column="isPublish" property="isPublish"/>
+        <association property="user" javaType="com.fc.model.User" resultMap="userMap"/>
+        <association property="topic" javaType="com.fc.model.Topic" resultMap="topicMap"/>
+    </resultMap>
+
+
+    <select id="listPostByUserId" resultType="com.fc.model.Post">
+        select userId, topicId, postId, title, publish_time
+        from post
+        where userId = #{userId} and isPublish = 'Y'
+    </select>
+
+    <insert id="insertPost">
+        <selectKey resultType="int" order="AFTER" keyProperty="postId">
+            select last_insert_id() as postId
+        </selectKey>
+        insert into post(title,content,publish_time,comment_time,comment_count,like_count,scan_count,userId,topicId)
+        values(#{title},#{content},#{publishTime},#{commentTime},#{commentCount},#{likeCount},#{scanCount},#{user.userId},#{topic.topicId})
+    </insert>
+
+    <select id="listPostByNewestTime" resultMap="postMap">
+        select u.userId,
+               u.username,
+               u.head_url,
+               u.description,
+               t.name,
+               t.content,
+               p.postId,
+               p.topicId,
+               p.title,
+               p.publish_time,
+               p.comment_time,
+               p.comment_count,
+               p.like_count,
+               p.scan_count,
+               p.isPublish
+        from post p
+                 join user u on p.userId = u.userId
+                 join topic t on p.topicId = t.topicId
+        where p.isPublish = 'Y'
+        order by p.publish_time desc limit #{offset}, #{limit}
+    </select>
+
+    <select id="listPostByLatestTime" resultMap="postLatestMap">
+        select u.userId,
+               u.username,
+               u.head_url,
+               u.description,
+               t.name,
+               t.content,
+               p.postId,
+               p.topicId,
+               p.title,
+               p.publish_time,
+               p.comment_time,
+               p.comment_count,
+               p.like_count,
+               p.scan_count,
+               p.isPublish
+        from post p
+                 join user u on p.userId = u.userId
+                 join topic t on p.topicId = t.topicId
+        where p.isPublish = 'Y'
+        order by p.publish_time asc limit #{offset}, #{limit}
+    </select>
+
+    <select id="listPostByHottest" resultMap="postHottestMap">
+        select u.userId,
+               u.username,
+               u.head_url,
+               u.description,
+               t.name,
+               t.content,
+               p.postId,
+               p.topicId,
+               p.title,
+               p.publish_time,
+               p.comment_time,
+               p.comment_count,
+               p.like_count,
+               p.scan_count,
+               p.isPublish
+        from post p
+                 join user u on p.userId = u.userId
+                 join topic t on p.topicId = t.topicId
+        where p.isPublish = 'Y'
+        order by p.like_count desc limit #{offset}, #{limit}
+    </select>
+
+    <select id="listPostByTopic" resultMap="postTopicMap">
+        select u.userId,
+               u.username,
+               u.head_url,
+               u.description,
+               t.name,
+               t.content,
+               p.postId,
+               p.topicId,
+               p.title,
+               p.publish_time,
+               p.comment_time,
+               p.comment_count,
+               p.like_count,
+               p.scan_count,
+               p.isPublish
+        from post p
+                 join user u on p.userId = u.userId
+                 join topic t on p.topicId = t.topicId
+        where p.topicId = #{topicId} and p.isPublish = 'Y'
+        order by p.comment_time desc limit #{offset}, #{limit}
+    </select>
+
+    <select id="listPostsNotApprove" resultMap="post2Map">
+        select u.userId,
+               u.username,
+               u.head_url,
+               u.description,
+               t.name,
+               p.postId,
+               p.topicId,
+               p.title,
+               p.content,
+               p.publish_time,
+               p.comment_time,
+               p.scan_count,
+               p.isPublish
+        from post p
+                 join user u on p.userId = u.userId
+                 join topic t on p.topicId = t.topicId
+        where p.isPublish = 'N'
+        order by p.comment_time
+    </select>
+
+    <select id="listPostByTopicId" resultMap="postByTopicMap">
+        select u.userId, u.head_url, u.username, p.topicId, p.postId, p.title, p.publish_time
+        from post p join user u on p.userId = u.userId
+        where p.topicId = #{topicId} and p.postId != #{postId} and p.isPublish = 'Y'
+    </select>
+
+    <select id="searchByTitle" resultMap="searchByTitleMap">
+        select u.userId,
+               u.username,
+               u.head_url,
+               u.description,
+               t.name,
+               t.content,
+               p.postId,
+               p.topicId,
+               p.title,
+               p.publish_time,
+               p.comment_time,
+               p.comment_count,
+               p.like_count,
+               p.scan_count,
+               p.isPublish
+        from post p
+                 join user u on p.userId = u.userId
+                 join topic t on p.topicId = t.topicId
+        where p.title like '%' #{title} '%' and p.isPublish = 'Y'
+        order by p.comment_time
+    </select>
+
+    <select id="selectPostCount" resultType="int">
+        select count(*)
+        from post
+        where isPublish = 'Y'
+    </select>
+
+    <select id="getPostByPostId" resultMap="post2Map">
+        select u.userId,
+               u.username,
+               u.head_url,
+               u.description,
+               p.postId,
+               p.topicId,
+               p.title,
+               p.content,
+               p.publish_time,
+               p.comment_time,
+               p.comment_count,
+               p.like_count,
+               p.scan_count,
+               p.isPublish,
+               t.topicId,
+               t.name
+        from post p
+                 join user u on p.userId = u.userId
+                 join topic t on p.topicId = t.topicId
+        where p.postId = #{postId} and p.isPublish = 'Y'
+    </select>
+
+    <update id="updateCommentCount">
+        update post
+        set comment_count = comment_count + #{val}
+        where postId = #{postId}
+    </update>
+
+    <update id="updateScanCount">
+        update post
+        set scan_count = scan_count + 1
+        where postId = #{postId}
+    </update>
+
+    <update id="updateLikeCount">
+        update post
+        set like_count = #{val}
+        where postId = #{postId}
+    </update>
+
+    <update id="updateCommentTime">
+        update post
+        set comment_time = date_format(now(), '%Y-%c-%d %H:%i:%s')
+        where postId = #{postId}
+    </update>
+
+    <select id="getUserIdByPostId" resultType="int">
+        select userId
+        from post
+        where postId = #{postId}
+    </select>
+
+    <select id="getTitleByPostId" resultType="String">
+        select title
+        from post
+        where postId = #{postId}
+    </select>
+
+    <delete id="deletePost">
+        delete from post
+        where postId = #{postId}
+    </delete>
+
+    <update id="acceptPost">
+        update post
+        set isPublish = 'Y'
+        where postId = #{postId}
+    </update>
+
+    <insert id="insertPostVisit">
+        insert into post_visit(postId)
+        values(#{postId})
+    </insert>
+
+    <select id="getPostVisitByPostId" resultType="com.fc.model.Post">
+        select *
+        from post_visit
+        where postId = #{postId}
+    </select>
+
+    <select id="selectNoOfPost" resultType="double">
+        select count(*) from post where (publish_time between #{fromDate} and #{toDate}) and isPublish = 'Y'
+    </select>
+
+    <update id="rejectPost">
+        update post
+        set isPublish = 'P'
+        where postId = #{postId}
+    </update>
+
+<!--    <select id="selectLikeCount" resultType="int">-->
+<!--        select like_count from post where-->
+<!--    </select>-->
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

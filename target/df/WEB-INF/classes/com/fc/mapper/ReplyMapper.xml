@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fc.mapper.ReplyMapper">
+
+    <resultMap type="com.fc.model.User" id="userMap">
+        <id column="userId" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="head_url" property="headUrl"/>
+    </resultMap>
+
+    <resultMap type="com.fc.model.Reply" id="replyMap">
+        <id column="replyId" property="replyId"/>
+        <result column="content" property="content"/>
+        <result column="reply_time" property="replyTime"/>
+        <result column="isPublish" property="isPublish"/>
+        <association property="user" javaType="com.fc.model.User" resultMap="userMap" />
+    </resultMap>
+
+    <resultMap type="com.fc.model.Reply" id="replyById">
+        <id column="replyId" property="replyId"/>
+        <result column="content" property="content"/>
+        <result column="reply_time" property="replyTime"/>
+        <result column="isPublish" property="isPublish"/>
+        <association property="user" javaType="com.fc.model.User" resultMap="userMap"/>
+    </resultMap>
+
+    <select id="getReplyById" resultMap="replyById">
+        select *
+        from reply r
+        where r.replyId = #{replyId}
+    </select>
+
+    <delete id="deleteReply">
+        delete from reply
+        where replyId = #{replyId}
+    </delete>
+
+    <select id="listReply" resultMap="replyMap">
+        select r.replyId,r.content,r.reply_time,r.isPublish,u.userId,u.username,u.head_url from reply r join user u on r.userId=u.userId
+        where commentId=#{commentId}
+    </select>
+
+    <insert id="insertReply">
+        <selectKey resultType="int" order="AFTER" keyProperty="replyId">
+            select last_insert_id() as replyId
+        </selectKey>
+        insert into reply(content,userId,commentId,reply_time) values(#{content},#{user.userId},#{comment.commentId},#{replyTime})
+    </insert>
+
+</mapper>

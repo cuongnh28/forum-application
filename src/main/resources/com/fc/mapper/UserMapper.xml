@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fc.mapper.UserMapper">
+
+
+	<select id="selectEmailCount" resultType="int">
+        select count(*) from user where email = #{email}
+    </select>
+
+    <insert id="insertUser">
+        insert into user(email,password,actived,activate_code,join_time,username,head_url)
+        values(#{email},#{password},#{actived},#{activateCode},#{joinTime},#{username},#{headUrl})
+    </insert>
+
+
+
+    <select id="selectActived" resultType="int">
+        select actived from user where email=#{email}
+    </select>
+
+    <select id="selectUserByUserId" resultType="com.fc.model.User">
+        select userId,username,description,position,school,job,head_url,follow_count,follower_count,like_count,post_count,scan_count,isAdmin,cover
+        from user
+        where userId=#{userId}
+    </select>
+
+    <select id="selectUserIdByEmailAndPassword" resultType="int">
+        select userId from user where email=#{email} and password=#{password}
+    </select>
+
+    <select id="selectEditInfo" resultType="com.fc.model.User">
+        select userId,username,head_url,description,position,school,job from user
+        where userId=#{userId}
+    </select>
+
+    <update id="updateUser">
+        update user set username=#{username},description=#{description},position=#{position},school=#{school},job=#{job}
+        where userId=#{userId}
+    </update>
+
+    <update id="updatePostCount">
+        update user set post_count = post_count+1 where userId=#{userId};
+    </update>
+
+    <update id="updateActived">
+        update user set actived=1 where activate_code=#{activateCode}
+    </update>
+
+    <insert id="insertInfo">
+        insert into info values(null,#{requestUrl},#{contextPath},#{remoteAddr},null)
+    </insert>
+
+    <select id="listUserByTime" resultType="com.fc.model.User">
+        select userId,username,head_url from user order by join_time desc limit 6
+    </select>
+
+    <select id="listUserByHot" resultType="com.fc.model.User">
+        select userId,username,head_url from user order by follower_count desc limit 6
+    </select>
+
+    <update id="updateHeadUrl">
+        update user set head_url=#{headUrl} where userId=#{userId}
+    </update>
+
+    <update id="updateCover">
+        update user set cover=#{cover} where userId=#{userId}
+    </update>
+
+    <select id="selectHeadUrl" resultType="String">
+        select head_url from user where userId=#{userId}
+    </select>
+
+    <update id="updateScanCount">
+        update user set scan_count = scan_count + 1 where userId = #{userId}
+    </update>
+
+    <select id="selectUsernameByUserId" resultType="com.fc.model.User">
+        select userId,username from user where userId=#{userId}
+    </select>
+
+    <select id="selectPasswordByUserId" resultType="String">
+        select password from user where userId=#{userId}
+    </select>
+
+    <update id="updatePassword">
+        update user set password = #{newPassword} where userId=#{userId}
+    </update>
+
+    <select id="selectVerifyCode" resultType="String">
+        select activate_code from user where email=#{email}
+    </select>
+
+    <update id="updatePasswordByActivateCode">
+        update user set password=substring(#{code},1,8) where activate_code=#{code}
+    </update>
+
+    <select id="selectNoOfUser" resultType="double">
+        select count(*) from user where join_time between #{fromDate} and #{toDate}
+    </select>
+
+    <update id="updateFollowerCount">
+        update user set follower_count = #{follower_count} where userId=#{userId}
+    </update>
+
+    <update id="updateFollowCount">
+        update user set follow_count = #{follow_count} where userId=#{userId}
+    </update>
+
+</mapper>
+
+

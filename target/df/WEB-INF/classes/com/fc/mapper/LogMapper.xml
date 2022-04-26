@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fc.mapper.LogMapper">
+
+
+    <insert id="insertLog">
+        insert into log(userId,commentId,replyId,other_username,operation,postId,displayed_content)
+        values(#{userId},#{commentId},#{replyId},#{otherUsername},#{operation},#{postId},#{displayedContent})
+    </insert>
+
+    <select id="listLogByUserId" resultType="com.fc.model.Log">
+        select * from log where userId=#{userId}
+    </select>
+
+    <delete id="deleteLogByPost">
+        delete from log
+        where postId = #{postId}
+    </delete>
+
+    <delete id="deleteLogByReply">
+        delete from log
+        where replyId = #{replyId}
+    </delete>
+
+    <delete id="deleteLogByComment">
+        delete from log
+        where commentId = #{commentId}
+    </delete>
+
+</mapper>

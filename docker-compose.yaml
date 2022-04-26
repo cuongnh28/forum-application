@@ -1,0 +1,26 @@
+version: "3"
+services:
+  kmysql:
+    image: mysql:8
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: df
+      MYSQL_ROOT_PASSWORD: 123456789
+    volumes:
+      - ./mysql-dump:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/mysql
+  kredis:
+    image: redis
+    environment:
+      - REDIS_URL=redis://redis:6379
+  kapp:
+    build: .
+    image: cuongnh28/forum
+    ports:
+      - 8081:8081
+    depends_on:
+      - kmysql
+      - kredis
+volumes:
+  db_data: {}

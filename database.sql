@@ -18,7 +18,6 @@
 --
 -- Table structure for table `comment`
 --
-CREATE DATABASE df;
 USE df;
 
 DROP TABLE IF EXISTS `comment`;
